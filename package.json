@@ -1,0 +1,25 @@
+{
+  "name": "command-help",
+  "version": "1.0.0",
+  "description": "command helper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huangyingxian/command-help.git"
+  },
+  "keywords": [
+    "command",
+    "helper",
+    "help",
+    "script"
+  ],
+  "author": "492753097@qq.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huangyingxian/command-help/issues"
+  },
+  "homepage": "https://github.com/huangyingxian/command-help#readme"
+}
