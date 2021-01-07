@@ -20,9 +20,9 @@ commandHelp.program({name: package.name.replace(/@.+\//, ''), version: package.v
 
 /**
 1.查询支持的参数列表
-node ./test.js --help
+node .\test\test.js --help
 2.查询脚本版本号
-node ./test.js -v
+node .\test\test.js -v
  */
 
 
