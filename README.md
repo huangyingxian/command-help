@@ -45,6 +45,8 @@ Nodejs command help module
     "positional": false
 }
 ```
+3. 如果是必选项，则不需要使用 - 开头，上面2就会positional = true；反之，- 开头的变量则为可变变量
+4. 为必填选项时，则有这个内容；可选选项是，选择了可选选项，则必须要带上这个数据；
 
 
 

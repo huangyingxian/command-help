@@ -25,17 +25,25 @@ const cli = {
 
 		flags = Array.isArray(flags) ? flags : [flags]
 		addition.dest = addition.dest || flags.slice(-1)[0].toLowerCase().replace(/^-+/, '').replace(/-[a-z]/g, character => character.slice(1).toUpperCase())
-		addition.help = addition.help || {'help': 'output usage information', 'version': 'output the version number'}[addition.action]
-		cli._options.push(Object.assign(addition, {flags: flags, positional: !flags[0].startsWith('-')}))
+		addition.help = addition.help || { 'help': 'output usage information', 'version': 'output the version number' }[addition.action]
+		cli._options.push(Object.assign(addition, { flags: flags, positional: !flags[0].startsWith('-') }))
 		return cli
 	},
 	parse: argv => {
+		console.log(JSON.stringify(argv))
 		const positionals = cli._options.map((option, index) => option.positional ? index : null).filter(index => index !== null), optionals = {}
 		cli._options.forEach((option, index) => option.positional ? null : option.flags.forEach(flag => optionals[flag] = index))
 
 		cli._program.name = cli._program.name || require('path').parse(argv[1]).base
-		const args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
-
+		// const args = argv.slice(2).reduce((result, part) => /^-[^-]/.test(part) ? result.concat(part.slice(1).split('').map(string => '-' + string)) : result.concat(part), [])
+		const args = argv.slice(2).reduce((result, part) => {
+			if (/^-[^-]/.test(part)) {
+				return result.concat(part.slice(1).split('').map(string => '-' + string))
+			} else {
+				return result.concat(part)
+			}
+		}, [])
+		console.log(JSON.stringify(args))
 		let pointer = 0
 		while (pointer < args.length) {
 			let value = null
@@ -43,7 +51,7 @@ const cli = {
 			const index = part.startsWith('-') ? optionals[part] : positionals.shift()
 			if (index == undefined) part.startsWith('-') ? error(`no such option: ${part}`) : error(`extra arguments found: ${part}`)
 			if (part.startsWith('-')) pointer += 1
-			const {action} = cli._options[index]
+			const { action } = cli._options[index]
 
 			if (['help', 'version'].includes(action)) {
 				if (action === 'help') help()
@@ -116,28 +124,28 @@ const usage = () => {
 const help = () => {
 	usage()
 	const positionals = cli._options.filter(option => option.positional)
-	.map(option => [option.metavar || option.dest, option.help])
+		.map(option => [option.metavar || option.dest, option.help])
 	const optionals = cli._options.filter(option => !option.positional)
-	.map(option => {
-		const {flags} = option
-		const name = option.metavar || option.dest
-		let use = ''
-		if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
-			use = flags.map(flag => `${flag}`).join(', ')
-		else if (option.nargs === '+')
-			use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ')
-		else
-			use = flags.map(flag => `${flag} ${name}`).join(', ')
-		return [use, option.help]
-	})
+		.map(option => {
+			const { flags } = option
+			const name = option.metavar || option.dest
+			let use = ''
+			if (['store_true', 'store_false', 'help', 'version'].includes(option.action))
+				use = flags.map(flag => `${flag}`).join(', ')
+			else if (option.nargs === '+')
+				use = flags.map(flag => `${flag} ${name} [${name} ...]`).join(', ')
+			else
+				use = flags.map(flag => `${flag} ${name}`).join(', ')
+			return [use, option.help]
+		})
 	let align = Math.max.apply(null, positionals.concat(optionals).map(option => option[0].length))
 	align = align > 30 ? 30 : align
 	const rest = cli.width - align - 4
 	const publish = option => {
 		const slice = string =>
 			Array.from(Array(Math.ceil(string.length / rest)).keys())
-			.map(index => string.slice(index * rest, (index + 1) * rest))
-			.join('\n' + pad(align + 4))
+				.map(index => string.slice(index * rest, (index + 1) * rest))
+				.join('\n' + pad(align + 4))
 		option[0].length < align
 			? console.log(`  ${option[0]}${pad(align - option[0].length)}  ${slice(option[1])}`)
 			: console.log(`  ${option[0]}\n${pad(align + 4)}${slice(option[1])}`)
